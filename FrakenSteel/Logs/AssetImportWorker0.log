@@ -22,11 +22,19 @@ AssetImportWorker0
 -logFile
 Logs/AssetImportWorker0.log
 -srvPort
+<<<<<<< HEAD
 54055
 Successfully changed project path to: /Users/frederic.noury/unity/Fraken-Steel/FrakenSteel
 /Users/frederic.noury/unity/Fraken-Steel/FrakenSteel
 Using Asset Import Pipeline V2.
 Refreshing native plugins compatible for Editor in 76.34 ms, found 3 plugins.
+=======
+54252
+Successfully changed project path to: C:/Users/asafs/Documents/GitHub/Fraken-Steel/FrakenSteel
+C:/Users/asafs/Documents/GitHub/Fraken-Steel/FrakenSteel
+Using Asset Import Pipeline V2.
+Refreshing native plugins compatible for Editor in 216.70 ms, found 3 plugins.
+>>>>>>> 16ebea2e956c6247e46c5910360a1cdea6a661df
 Preloading 0 native plugins for Editor in 0.00 ms.
 Initialize engine version: 2020.3.22f1 (e1a7f79fd887)
 [Subsystems] Discovering subsystems at path /Users/frederic.noury/Documents/Artus/dev/unity/2020.3.22f1/Unity.app/Contents/Resources/UnitySubsystems
@@ -38,6 +46,7 @@ GfxDevice: creating device client; threaded=0
 2022-01-29 16:04:08.667 Unity[42790:865828] Using device NVIDIA GeForce GT 640M (high power)
 Initializing Metal device caps: NVIDIA GeForce GT 640M
 Initialize mono
+<<<<<<< HEAD
 Mono path[0] = '/Users/frederic.noury/Documents/Artus/dev/unity/2020.3.22f1/Unity.app/Contents/Managed'
 Mono path[1] = '/Users/frederic.noury/Documents/Artus/dev/unity/2020.3.22f1/Unity.app/Contents/MonoBleedingEdge/lib/mono/unityjit'
 Mono config path = '/Users/frederic.noury/Documents/Artus/dev/unity/2020.3.22f1/Unity.app/Contents/MonoBleedingEdge/etc'
@@ -315,3 +324,10 @@ Received Import Request.
 Start importing Assets/Plugins/GitHub/Editor/AsyncBridge.Net35.dll using Guid(d516f2a1bec6a9645a084ef8c9237132) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ff1ed0c2b70dd2eb469493c9ef6caba0') in 0.403508 seconds 
   Import took 0.407581 seconds .
 
+=======
+Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/2020.3.22f1/Editor/Data/Managed'
+Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/2020.3.22f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit'
+Mono config path = 'C:/Program Files/Unity/Hub/Editor/2020.3.22f1/Editor/Data/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56656
+Begin MonoManager ReloadAssembly
+>>>>>>> 16ebea2e956c6247e46c5910360a1cdea6a661df
