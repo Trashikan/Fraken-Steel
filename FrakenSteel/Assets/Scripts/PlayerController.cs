@@ -4,9 +4,23 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    //variable that can be modfied in inspector
+    [Header("Jump")]
+    public float jumpForce = 10;
+    public int extraJumpAmount;
+    public Transform[] groundChecks; 
+    public LayerMask ground;
+
+    [Header("Walk")]
+    public float Acceleration = 90;
+    public float Deceleration = 60;
+    public float moveClamp = 13;
+
     private Rigidbody2D rb;
 
-    public float speed = 5;
+    private float horizontalVelocity;
+    private float verticalVelocity;
+
 
     private float moveInputX;
     private bool JumpDown;
@@ -15,12 +29,11 @@ public class PlayerController : MonoBehaviour
     private bool facingRight = true;
     private Vector3 playerScale;
     
-    public float jumpForce = 10;
-    private bool isGrounded;
-    public Transform[] groundChecks; 
-    public LayerMask ground;
+    public bool isGrounded;
     private int extraJump; 
-    public int extraJumpAmount;
+    bool Jumping;
+
+    
 
 
     void Start()
@@ -32,7 +45,8 @@ public class PlayerController : MonoBehaviour
     {
         GetInput();
         CalculateGrounded();
-        ApplyJump();
+        CalculateJump();
+        CalculateMovement();
         if (isGrounded == true)
             extraJump = extraJumpAmount;
     }
@@ -44,29 +58,40 @@ public class PlayerController : MonoBehaviour
         moveInputX = Input.GetAxisRaw("Horizontal");
     }
 
-    void ApplyJump(){
-        if (JumpDown && isGrounded == true)
-            Jump();
+    void CalculateJump(){
+        if (JumpDown && isGrounded == true){
+            rb.AddForce(Vector2.up * jumpForce);
+        }
         else if (extraJump > 0 && JumpDown){
-            Jump();
-        extraJump--;
+            rb.AddForce(Vector2.up * jumpForce);
+            extraJump--;
         }
     }
 
+    void CalculateMovement(){
+        if (moveInputX != 0)
+        {
+            horizontalVelocity += moveInputX * Acceleration * Time.deltaTime;
+
+            horizontalVelocity = Mathf.Clamp(horizontalVelocity, -moveClamp, moveClamp);
+        }
+        else
+        {
+            if(!Jumping){
+                Debug.Log("slowing down..");
+                horizontalVelocity = Mathf.MoveTowards(horizontalVelocity, 0, Deceleration *Time.deltaTime);
+            }
+        }
+        rb.velocity = new Vector2(horizontalVelocity, rb.velocity.y);
+
+    }
+
+
     void FixedUpdate()
     {   
-        //Horizontal movement
-        rb.velocity = new Vector2(moveInputX * speed, rb.velocity.y);
-    
         //Flips the player sprite towards move direction
         if ((facingRight == false && moveInputX > 0f) || (facingRight == true && moveInputX < 0f))
             Flip();
-    }
-
-    private void Jump()
-    {
-        Debug.Log("Jumping");
-        rb.velocity = new Vector2(rb.velocity.x, jumpForce);
     }
 
     private void CalculateGrounded(){
@@ -89,7 +114,5 @@ public class PlayerController : MonoBehaviour
         playerScale.x = playerScale.x * -1;
         transform.localScale = playerScale;
     }
-
-    
 
 }
