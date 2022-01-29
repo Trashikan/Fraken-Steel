@@ -29,40 +29,30 @@ public class MovingPlatform : MonoBehaviour
             StartCoroutine(MoveTo(Pos2));
         if (transform.position == (Vector3)Pos2)
             StartCoroutine(MoveTo(Pos1));
+
+        Debug.Log(rb.velocity);
     }
 
-    IEnumerator MoveTo(Vector2 target){
-        Vector2 position = transform.position;
+    IEnumerator MoveTo(Vector2 target)
+    {
+        Vector2 startPosition = rb.gameObject.transform.position;
         float time = 0f;
-        while(transform.position != (Vector3)target)
+
+        while (rb.position != target)
         {
-            rb.MovePosition(Vector2.Lerp(position, target, (time / Vector2.Distance(position, target)) * speed));
+            rb.gameObject.transform.position = Vector2.Lerp(startPosition, target, (time / Vector2.Distance(startPosition, target)) * speed);
             time += Time.deltaTime;
             yield return null;
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D other) {
-        if(other.gameObject.tag == "Player"){
-            PlayerRb = other.gameObject.GetComponent<Rigidbody2D>();
-            PlayerOnPlatform = true;
-        }
+    void OnCollisionEnter2D(Collision2D col)
+    {
+        col.gameObject.transform.SetParent(gameObject.transform, true);
     }
 
-    private void OnCollisionExit2D(Collision2D other)
+    void OnCollisionExit2D(Collision2D col)
     {
-        if (other.gameObject.tag == "Player")
-        {
-            PlayerRb = null;
-            PlayerOnPlatform = false;
-        }
-    }
-
-    void FixedUpdate()
-    {
-        if (PlayerOnPlatform)
-        {
-            PlayerRb.velocity = PlayerRb.velocity + rb.velocity;
-        }
+        col.gameObject.transform.parent = null;
     }
 }
