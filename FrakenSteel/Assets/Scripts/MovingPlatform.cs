@@ -48,6 +48,7 @@ public class MovingPlatform : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D col)
     {
+        if(col.gameObject.transform.position.y < transform.position.y) return; // prevent player to be moved by the platform if he jump below
         col.gameObject.transform.SetParent(gameObject.transform, true);
     }
 
