@@ -22,6 +22,7 @@ public class PlayerController : MonoBehaviour
     private int extraJump; 
     public int extraJumpAmount;
 
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -56,7 +57,7 @@ public class PlayerController : MonoBehaviour
     {   
         //Horizontal movement
         rb.velocity = new Vector2(moveInputX * speed, rb.velocity.y);
-
+    
         //Flips the player sprite towards move direction
         if ((facingRight == false && moveInputX > 0f) || (facingRight == true && moveInputX < 0f))
             Flip();
@@ -88,4 +89,7 @@ public class PlayerController : MonoBehaviour
         playerScale.x = playerScale.x * -1;
         transform.localScale = playerScale;
     }
+
+    
+
 }
