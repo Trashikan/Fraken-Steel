@@ -568,3 +568,27 @@ AssetImportParameters requested are different than current active one (requested
   custom:video-decoder-webm-vp8: 9c59270c3fd7afecdb556c50c9e8de78 -> 
   custom:audio-decoder-ogg-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
   custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+========================================================================
+Received Import Request.
+  Time since last request: 2348.811184 seconds.
+  path: Packages/com.unity.2d.animation/Editor/Assets/LayoutOverlay/ScrollableToolbar.uss
+  artifactKey: Guid(f3a7eea6e0f5acb479ae4e70f8f25d95) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Packages/com.unity.2d.animation/Editor/Assets/LayoutOverlay/ScrollableToolbar.uss using Guid(f3a7eea6e0f5acb479ae4e70f8f25d95) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'cdda8f41f1812098da1023fe2c86c2c2') in 0.371738 seconds 
+  Import took 0.434964 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 6.425040 seconds.
+  path: Packages/com.unity.render-pipelines.core/Runtime/Debugging/Prefabs/Textures/White1px.png
+  artifactKey: Guid(127279d577f25ac4ea17dae3782e5074) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Packages/com.unity.render-pipelines.core/Runtime/Debugging/Prefabs/Textures/White1px.png using Guid(127279d577f25ac4ea17dae3782e5074) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '0253fd35fecb4d58d57a913ca0cef950') in 2.166110 seconds 
+  Import took 2.206038 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 18.859267 seconds.
+  path: Assets/Sprites
+  artifactKey: Guid(ed11217fbe8f4a04bb8ff080d6a41e86) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Sprites using Guid(ed11217fbe8f4a04bb8ff080d6a41e86) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'a3f29d5ee2e0f13af529e6da6a820850') in 0.026172 seconds 
+  Import took 0.234556 seconds .
+
