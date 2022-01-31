@@ -9,10 +9,6 @@ public class PlayerController : MonoBehaviour
     [Header("Checks")] 
 	[SerializeField] private Transform[] _groundCheckPoints;
 	[SerializeField] private Vector2 _groundChecksSize;
-	[Space(5)]
-	[SerializeField] private Transform _frontWallCheckPoint;
-	[SerializeField] private Transform _backWallCheckPoint;
-	[SerializeField] private Vector2 _wallCheckSize;
     
     [Header("Data")] 
     [SerializeField] private float coyoteTime = 0.1;
@@ -24,9 +20,9 @@ public class PlayerController : MonoBehaviour
 	public bool doKeepRunMomentum;
 	public float runMaxSpeed = 9.5f;
 	public float runAccel= 9.3f;
-  public float runDeccel=15f;
-  public float accelInAir=0.65f;
-  public float deccelInAir= 0.65f;
+  	public float runDeccel=15f;
+  	public float accelInAir=0.65f;
+ 	 public float deccelInAir= 0.65f;
 	public float stopPower=1.23f;
 	public float turnPower=1.13f;
 	public float accelPower= 1.05f;
@@ -36,11 +32,11 @@ public class PlayerController : MonoBehaviour
 	public float fallGravityMult =1.35f;
 	public float jumpCutMultiplier = 0.5f;
 	public int dashAmount= 1;
-  	public float dashSpeed: 17f
-  	public float dashAttackTime: 0.15f
-  	public float dashAttackDragAmount: 0.22f
-  	public float dashEndTime: 0.1f
-  	public float dashUpEndMult: 0.6f
+  	public float dashSpeed= 17f;
+  	public float dashAttackTime= 0.15f;
+  	public float dashAttackDragAmount= 0.22f;
+  	public float dashEndTime= 0.1f;
+  	public float dashUpEndMult= 0.6f;
   	public float dashEndRunLerp= 0.3f;
 
     
