@@ -14,8 +14,16 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] private Transform _backWallCheckPoint;
 	[SerializeField] private Vector2 _wallCheckSize;
     
+    [Header("Data")] 
     [SerializeField] private float coyoteTime;
     [SerializeField] private LayerMask _groundLayer;
+    public float jumpForce
+    public float dashAttackTime;
+    public float dashEndTime;
+    public float dragAmount;
+	public float frictionAmount;
+	public float dashAttackDragAmount;
+	public float gravityScale = 1f;
     
     public bool IsFacingRight { get; private set; }
 	public bool IsJumping { get; private set; }
@@ -25,18 +33,12 @@ public class PlayerController : MonoBehaviour
     private int _dashesLeft;
 	private float _dashStartTime;
 	private Vector2 _lastDashDir;
-    public float dashAttackTime;
-    public float dashEndTime;
     
     public float LastPressedJumpTime { get; private set; }
 	public float LastPressedDashTime { get; private set; }
-	public float dragAmount;
-	public float frictionAmount;
-	public float dashAttackDragAmount;
     
     RigidBody2D rb;
 
-    public float gravityScale = 1f;
 
     void Start()
     {
@@ -47,7 +49,6 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         Timers();
-        GetInput();
         PhysicsChecks();
         
         // Gravity when falling for better jump
@@ -76,9 +77,7 @@ public class PlayerController : MonoBehaviour
 
     private void GetInput()
     {
-        JumpDown = Input.GetButtonDown("Jump");
-        JumpUp = Input.GetButtonUp("Jump");
-        moveInputX = Input.GetAxisRaw("Horizontal");
+        
     }
     
     private void PhysicsChecks(){
@@ -139,7 +138,19 @@ public class PlayerController : MonoBehaviour
 	}
     }
 
+	private void Jump()
+	{
 
+		LastPressedJumpTime = 0;
+		LastOnGroundTime = 0;
+
+		float force = jumpForce;
+		if (rb.velocity.y < 0)
+			force -= rb.velocity.y;
+
+		rb.AddForce(Vector2.up * force, ForceMode2D.Impulse);
+	
+	}
 
     void FixedUpdate()
     {   
@@ -171,12 +182,35 @@ public class PlayerController : MonoBehaviour
 	{
 		RB.AddForce(Vector2.down * RB.velocity.y * (1 - data.jumpCutMultiplier), ForceMode2D.Impulse);
 	}
+	
+	private void StartDash(Vector2 dir)
+	{
+		LastOnGroundTime = 0;
+		LastPressedDashTime = 0;
 
+		SetGravityScale(0);
 
-    private void Flip()
+		rb.velocity = dir.normalized * dashSpeed;
+	}
+
+	private void StopDash(Vector2 dir)
     {
-        facingRight = !facingRight;
-        playerScale = transform.localScale;
+		SetGravityScale(gravityScale);
+
+		if (dir.y > 0)
+		{
+			if (dir.x == 0)
+				rb.AddForce(Vector2.down * rb.velocity.y * (1 - dashUpEndMult), ForceMode2D.Impulse);
+			else
+				rb.AddForce(Vector2.down * rb.velocity.y * (1 - dashUpEndMult) * .7f, ForceMode2D.Impulse);
+		}
+	}
+
+
+    private void Turn()
+    {
+        IsFacingRight = !IsFacingRight;
+        Vector3 playerScale = transform.localScale;
         playerScale.x = playerScale.x * -1;
         transform.localScale = playerScale;
     }
