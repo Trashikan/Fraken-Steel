@@ -15,21 +15,34 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] private Vector2 _wallCheckSize;
     
     [Header("Data")] 
-    [SerializeField] private float coyoteTime;
+    [SerializeField] private float coyoteTime = 0.1;
     [SerializeField] private LayerMask _groundLayer;
-    public float jumpForce
-    public float dashAttackTime;
-    public float dashEndTime;
-    public float dragAmount;
-	public float frictionAmount;
-	public float dashAttackDragAmount;
-	public float gravityScale = 1f;
-	public float dashUpEndMult;
+    public float jumpForce=12f;
+    public float dragAmount = 0.22f;
+	public float frictionAmount = 0.55f;
+	public float gravityScale = 1.1f;
 	public bool doKeepRunMomentum;
-	public float runMaxSpeed;
-	public float stopPower;
-	public float turnPower;
-	public float accelPower;
+	public float runMaxSpeed = 9.5f;
+	public float runAccel= 9.3f;
+  public float runDeccel=15f;
+  public float accelInAir=0.65f;
+  public float deccelInAir= 0.65f;
+	public float stopPower=1.23f;
+	public float turnPower=1.13f;
+	public float accelPower= 1.05f;
+	public float jumpBufferTime = 0.1f;
+	public float dashBufferTime = 0.05f;
+	public float quickFallGravityMult =2.2f;
+	public float fallGravityMult =1.35f;
+	public float jumpCutMultiplier = 0.5f;
+	public int dashAmount= 1;
+  	public float dashSpeed: 17f
+  	public float dashAttackTime: 0.15f
+  	public float dashAttackDragAmount: 0.22f
+  	public float dashEndTime: 0.1f
+  	public float dashUpEndMult: 0.6f
+  	public float dashEndRunLerp= 0.3f;
+
     
     public bool IsFacingRight { get; private set; }
 	public bool IsJumping { get; private set; }
@@ -56,6 +69,7 @@ public class PlayerController : MonoBehaviour
     {
         Timers();
         PhysicsChecks();
+	Input();
         
         // Gravity when falling for better jump
         if (!IsDashing)
@@ -81,9 +95,18 @@ public class PlayerController : MonoBehaviour
 	LastPressedDashTime -= Time.deltaTime;
     }
 
-    private void GetInput()
+    private void Input()
     {
-        
+        if(Input.GetButtonDown("Jump")){
+		LastPressedJumpTime = jumpBufferTime;
+	}
+	if(Input.GetButtonUp("Jump")){
+		if (CanJumpCut())
+			JumpCut();
+	}
+	if(Input.GetButtonDown("Dash")){
+		LastPressedDashTime = dashBufferTime;
+	}
     }
     
     private void PhysicsChecks(){
@@ -232,7 +255,7 @@ public class PlayerController : MonoBehaviour
 	
 	private void JumpCut()
 	{
-		RB.AddForce(Vector2.down * RB.velocity.y * (1 - data.jumpCutMultiplier), ForceMode2D.Impulse);
+		rb.AddForce(Vector2.down * rb.velocity.y * (1 - jumpCutMultiplier), ForceMode2D.Impulse);
 	}
 	
 	private void StartDash(Vector2 dir)
