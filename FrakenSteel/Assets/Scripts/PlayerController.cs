@@ -24,6 +24,12 @@ public class PlayerController : MonoBehaviour
 	public float frictionAmount;
 	public float dashAttackDragAmount;
 	public float gravityScale = 1f;
+	public float dashUpEndMult;
+	public bool doKeepRunMomentum;
+	public float runMaxSpeed;
+	public float stopPower;
+	public float turnPower;
+	public float accelPower;
     
     public bool IsFacingRight { get; private set; }
 	public bool IsJumping { get; private set; }
@@ -151,6 +157,52 @@ public class PlayerController : MonoBehaviour
 		rb.AddForce(Vector2.up * force, ForceMode2D.Impulse);
 	
 	}
+	
+	
+	//ngl I got this big block on internet
+	private void Run(float lerpAmount)
+	{
+		float targetSpeed = Input.GetAxis("Horizontal") * runMaxSpeed; 
+		float speedDif = targetSpeed - rb.velocity.x; 
+
+		float accelRate;
+		
+		if (LastOnGroundTime > 0)
+			accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ? runAccel : runDeccel;
+		else
+			accelRate = (Mathf.Abs(targetSpeed) > 0.01f) ? runAccel * accelInAir : runDeccel * deccelInAir;
+
+	
+		if (((rb.velocity.x > targetSpeed && targetSpeed > 0.01f) || (rb.velocity.x < targetSpeed && targetSpeed < -0.01f)) && doKeepRunMomentum)
+		{
+			accelRate = 0; 
+		}
+	
+
+		float velPower;
+		if (Mathf.Abs(targetSpeed) < 0.01f)
+		{
+			velPower = stopPower;
+		}
+		else if (Mathf.Abs(rb.velocity.x) > 0 && (Mathf.Sign(targetSpeed) != Mathf.Sign(rb.velocity.x)))
+		{
+			velPower = turnPower;
+		}
+		else
+		{
+			velPower = accelPower;
+		}
+	
+
+		
+		float movement = Mathf.Pow(Mathf.Abs(speedDif) * accelRate, velPower) * Mathf.Sign(speedDif);
+		movement = Mathf.Lerp(rb.velocity.x, movement, lerpAmount); 
+
+		rb.AddForce(movement * Vector2.right); 
+
+		if (Input.GetAxis("Horizontal") != 0)
+			CheckDirectionToFace(Input.GetAxis("Horizontal") > 0);
+	}
 
     void FixedUpdate()
     {   
@@ -214,5 +266,44 @@ public class PlayerController : MonoBehaviour
         playerScale.x = playerScale.x * -1;
         transform.localScale = playerScale;
     }
+    
+    
+    
+    
+    public void CheckDirectionToFace(bool isMovingRight)
+	{
+		if (isMovingRight != IsFacingRight)
+			Turn();
+	}
+
+	private bool CanJump()
+    {
+		return LastOnGroundTime > 0 && !IsJumping;
+    }
+
+	private bool CanWallJump()
+    {
+		return LastPressedJumpTime > 0 && LastOnWallTime > 0 && LastOnGroundTime <= 0 && (!IsWallJumping ||
+			 (LastOnWallRightTime > 0 && _lastWallJumpDir == 1) || (LastOnWallLeftTime > 0 && _lastWallJumpDir == -1));
+	}
+
+	private bool CanJumpCut()
+    {
+		return IsJumping && rb.velocity.y > 0;
+    }
+    
+    private bool CanDash()
+	{
+		if (_dashesLeft < dashAmount && LastOnGroundTime > 0)
+			_dashesLeft = dashAmount;
+
+		return _dashesLeft > 0;
+	}
+
+	private bool DashAttackOver()
+    {
+		return IsDashing && Time.time - _dashStartTime > dashAttackTime;
+	}
+
 
 }
