@@ -5,50 +5,73 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     //variable that can be modfied in inspector
-    [Header("Jump")]
-    public float jumpForce = 10;
-    public int extraJumpAmount;
-    public Transform[] groundChecks; 
-    public LayerMask ground;
-
-    [Header("Walk")]
-    public float Acceleration = 90;
-    public float Deceleration = 60;
-    public float moveClamp = 13;
-
-    private Rigidbody2D rb;
-
-    private float horizontalVelocity;
-    private float verticalVelocity;
-
-
-    private float moveInputX;
-    private bool JumpDown;
-    private bool JumpUp;
-
-    private bool facingRight = true;
-    private Vector3 playerScale;
     
-    public bool isGrounded;
-    private int extraJump; 
-    bool Jumping;
-
+    [Header("Checks")] 
+	[SerializeField] private Transform[] _groundCheckPoints;
+	[SerializeField] private Vector2 _groundChecksSize;
+	[Space(5)]
+	[SerializeField] private Transform _frontWallCheckPoint;
+	[SerializeField] private Transform _backWallCheckPoint;
+	[SerializeField] private Vector2 _wallCheckSize;
     
+    [SerializeField] private float coyoteTime;
+    [SerializeField] private LayerMask _groundLayer;
+    
+    public bool IsFacingRight { get; private set; }
+	public bool IsJumping { get; private set; }
+    public bool IsDashing { get; private set; }
+	public float LastOnGroundTime { get; private set; }
+    
+    private int _dashesLeft;
+	private float _dashStartTime;
+	private Vector2 _lastDashDir;
+    public float dashAttackTime;
+    public float dashEndTime;
+    
+    public float LastPressedJumpTime { get; private set; }
+	public float LastPressedDashTime { get; private set; }
+    
+    RigidBody2D rb;
 
+    public float gravityScale = 1f;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        isFacingRight = true;
     }
 
     private void Update()
     {
+        Timers();
         GetInput();
-        CalculateGrounded();
+        PhysicsChecks();
+        
+        // Gravity for better jump
+        if (!IsDashing)
+		{
+			if (rb.velocity.y >= 0)
+				SetGravityScale(gravityScale);
+			else if (Input.GetAxis("Vertical") < 0)
+				SetGravityScale(gravityScale * quickFallGravityMult);
+			else
+				SetGravityScale(gravityScale * fallGravityMult);
+		}
+        
         CalculateJump();
+        CalculateDash();
         CalculateMovement();
         if (isGrounded == true)
             extraJump = extraJumpAmount;
+    }
+    
+    private void Timers(){
+        LastOnGroundTime -= Time.deltaTime;
+		LastOnWallTime -= Time.deltaTime;
+		LastOnWallRightTime -= Time.deltaTime;
+		LastOnWallLeftTime -= Time.deltaTime;
+		LastPressedJumpTime -= Time.deltaTime;
+		LastPressedDashTime -= Time.deltaTime;
     }
 
     private void GetInput()
@@ -57,15 +80,66 @@ public class PlayerController : MonoBehaviour
         JumpUp = Input.GetButtonUp("Jump");
         moveInputX = Input.GetAxisRaw("Horizontal");
     }
+    
+    private void PhysicsChecks(){
+        //Ground Check
+        foreach (Transform groundCheck in _groundCheckPoints)
+        {
+            if (Physics2D.OverlapCircle(groundCheck.transform.position, _groundChecksSize, _groundLayer))
+            {
+                LastOnGroundTime = coyoteTime;
+                break;
+            }
+    }
 
     void CalculateJump(){
-        if (JumpDown && isGrounded == true){
-            rb.AddForce(Vector2.up * jumpForce);
+        if (IsJumping && RB.velocity.y < 0)
+		{
+			// falling
+            IsJumping = false;
+		}
+        
+        if (!IsDashing)
+		{
+			//Jump
+			if (CanJump() && LastPressedJumpTime > 0)
+			{
+				IsJumping = true;
+				Jump();
+			}
         }
-        else if (extraJump > 0 && JumpDown){
-            rb.AddForce(Vector2.up * jumpForce);
-            extraJump--;
-        }
+    }
+    
+    void CalculateDash(){
+        if (DashAttackOver())
+		{
+			if (_dashAttacking)
+			{
+				_dashAttacking = false;
+				StopDash(_lastDashDir); 
+			}
+			else if (Time.time - _dashStartTime > dashAttackTime + dashEndTime)
+			{
+				IsDashing = false; 
+			}
+		}
+    
+        if (CanDash() && LastPressedDashTime > 0)
+		{
+			if (new Vector2(Input.GetAxis("Horizontal"),Input.GetAxis("Vertical"))) != Vector2.zero)
+				_lastDashDir = new Vector2(Input.GetAxis("Horizontal"),Input.GetAxis("Vertical"));
+			else
+				_lastDashDir = IsFacingRight ? Vector2.right : Vector2.left;
+
+			_dashStartTime = Time.time;
+			_dashesLeft--;
+			_dashAttacking = true;
+
+			IsDashing = true;
+			IsJumping = false;
+
+			StartDash(_lastDashDir);
+		}
     }
 
     void CalculateMovement(){
@@ -94,18 +168,6 @@ public class PlayerController : MonoBehaviour
             Flip();
     }
 
-    private void CalculateGrounded(){
-        foreach (Transform groundCheck in groundChecks)
-        {
-            if (Physics2D.OverlapCircle(groundCheck.transform.position, 0.01f, ground))
-            {
-                isGrounded = true;
-                break;
-            }
-            else
-                isGrounded = false;
-        }
-    }
 
     private void Flip()
     {
