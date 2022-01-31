@@ -30,6 +30,9 @@ public class PlayerController : MonoBehaviour
     
     public float LastPressedJumpTime { get; private set; }
 	public float LastPressedDashTime { get; private set; }
+	public float dragAmount;
+	public float frictionAmount;
+	public float dashAttackDragAmount;
     
     RigidBody2D rb;
 
@@ -47,31 +50,28 @@ public class PlayerController : MonoBehaviour
         GetInput();
         PhysicsChecks();
         
-        // Gravity for better jump
+        // Gravity when falling for better jump
         if (!IsDashing)
-		{
-			if (rb.velocity.y >= 0)
-				SetGravityScale(gravityScale);
-			else if (Input.GetAxis("Vertical") < 0)
-				SetGravityScale(gravityScale * quickFallGravityMult);
-			else
-				SetGravityScale(gravityScale * fallGravityMult);
-		}
+	{
+		if (rb.velocity.y >= 0)
+			SetGravityScale(gravityScale);
+		else if (Input.GetAxis("Vertical") < 0)
+			SetGravityScale(gravityScale * quickFallGravityMult);
+		else
+			SetGravityScale(gravityScale * fallGravityMult);
+	}
         
         CalculateJump();
         CalculateDash();
-        CalculateMovement();
-        if (isGrounded == true)
-            extraJump = extraJumpAmount;
     }
     
     private void Timers(){
         LastOnGroundTime -= Time.deltaTime;
-		LastOnWallTime -= Time.deltaTime;
-		LastOnWallRightTime -= Time.deltaTime;
-		LastOnWallLeftTime -= Time.deltaTime;
-		LastPressedJumpTime -= Time.deltaTime;
-		LastPressedDashTime -= Time.deltaTime;
+	LastOnWallTime -= Time.deltaTime;
+	LastOnWallRightTime -= Time.deltaTime;
+	LastOnWallLeftTime -= Time.deltaTime;
+	LastPressedJumpTime -= Time.deltaTime;
+	LastPressedDashTime -= Time.deltaTime;
     }
 
     private void GetInput()
@@ -100,73 +100,77 @@ public class PlayerController : MonoBehaviour
 		}
         
         if (!IsDashing)
+	{
+		//Jump
+		if (CanJump() && LastPressedJumpTime > 0)
 		{
-			//Jump
-			if (CanJump() && LastPressedJumpTime > 0)
-			{
-				IsJumping = true;
-				Jump();
-			}
+			IsJumping = true;
+			Jump();
+		}
         }
     }
     
     void CalculateDash(){
         if (DashAttackOver())
+	{
+		if (_dashAttacking)
 		{
-			if (_dashAttacking)
-			{
-				_dashAttacking = false;
-				StopDash(_lastDashDir); 
-			}
-			else if (Time.time - _dashStartTime > dashAttackTime + dashEndTime)
-			{
-				IsDashing = false; 
-			}
+			_dashAttacking = false;
+			StopDash(_lastDashDir); 
 		}
+		else if (Time.time - _dashStartTime > dashAttackTime + dashEndTime)
+		{
+			IsDashing = false; 
+		}
+	}
     
         if (CanDash() && LastPressedDashTime > 0)
-		{
-			if (new Vector2(Input.GetAxis("Horizontal"),Input.GetAxis("Vertical"))) != Vector2.zero)
-				_lastDashDir = new Vector2(Input.GetAxis("Horizontal"),Input.GetAxis("Vertical"));
-			else
-				_lastDashDir = IsFacingRight ? Vector2.right : Vector2.left;
-
-			_dashStartTime = Time.time;
-			_dashesLeft--;
-			_dashAttacking = true;
-
-			IsDashing = true;
-			IsJumping = false;
-
-			StartDash(_lastDashDir);
-		}
+	{
+		if (new Vector2(Input.GetAxis("Horizontal"),Input.GetAxis("Vertical"))) != Vector2.zero)
+			_lastDashDir = new Vector2(Input.GetAxis("Horizontal"),Input.GetAxis("Vertical"));
+		else
+			_lastDashDir = IsFacingRight ? Vector2.right : Vector2.left;
+		_dashStartTime = Time.time;
+		_dashesLeft--;
+		_dashAttacking = true;
+		IsDashing = true;
+		IsJumping = false;
+		StartDash(_lastDashDir);
+	}
     }
 
-    void CalculateMovement(){
-        if (moveInputX != 0)
-        {
-            horizontalVelocity += moveInputX * Acceleration * Time.deltaTime;
-
-            horizontalVelocity = Mathf.Clamp(horizontalVelocity, -moveClamp, moveClamp);
-        }
-        else
-        {
-            if(!Jumping){
-                Debug.Log("slowing down..");
-                horizontalVelocity = Mathf.MoveTowards(horizontalVelocity, 0, Deceleration *Time.deltaTime);
-            }
-        }
-        rb.velocity = new Vector2(horizontalVelocity, rb.velocity.y);
-
-    }
 
 
     void FixedUpdate()
     {   
-        //Flips the player sprite towards move direction
-        if ((facingRight == false && moveInputX > 0f) || (facingRight == true && moveInputX < 0f))
-            Flip();
+        if (IsDashing)
+		Drag(DashAttackOver()? dragAmount : dashAttackDragAmount);
+	else if(LastOnGroundTime <= 0)
+		Drag(dragAmount);
+        else
+		Drag(frictionAmount);
     }
+    
+    public void SetGravityScale(float scale)
+	{
+		rb.gravityScale = scale;
+	}
+
+	private void Drag(float amount)
+	{
+		Vector2 force = amount * rb.velocity.normalized;
+		force.x = Mathf.Min(Mathf.Abs(rb.velocity.x), Mathf.Abs(force.x));
+		force.y = Mathf.Min(Mathf.Abs(rb.velocity.y), Mathf.Abs(force.y));
+		force.x *= Mathf.Sign(rb.velocity.x); 
+		force.y *= Mathf.Sign(rb.velocity.y);
+
+		rb.AddForce(-force, ForceMode2D.Impulse);
+	}
+	
+	private void JumpCut()
+	{
+		RB.AddForce(Vector2.down * RB.velocity.y * (1 - data.jumpCutMultiplier), ForceMode2D.Impulse);
+	}
 
 
     private void Flip()
