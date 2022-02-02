@@ -718,11 +718,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c2de71241df944d3d8d2714416feaa58, type: 3}
---- !u!4 &2127678792 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7081113168489248437, guid: ff3613d118eb60b42ae15c2072563542, type: 3}
-  m_PrefabInstance: {fileID: 9127823868084746456}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5633129176983074342
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -802,7 +797,7 @@ PrefabInstance:
     - target: {fileID: 5069640466591684579, guid: ff3613d118eb60b42ae15c2072563542, type: 3}
       propertyPath: m_Material
       value: 
-      objectReference: {fileID: 6200000, guid: 4b603a9a7ebf2a94e952493ce9ade00e, type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: 5069640466591684579, guid: ff3613d118eb60b42ae15c2072563542, type: 3}
       propertyPath: m_Constraints
       value: 4
@@ -864,8 +859,12 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 9127823867057930349, guid: ff3613d118eb60b42ae15c2072563542, type: 3}
+      propertyPath: dashSpeed
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 9127823867057930349, guid: ff3613d118eb60b42ae15c2072563542, type: 3}
       propertyPath: jumpForce
-      value: 500
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 9127823867057930349, guid: ff3613d118eb60b42ae15c2072563542, type: 3}
       propertyPath: Acceleration
@@ -880,12 +879,24 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9127823867057930349, guid: ff3613d118eb60b42ae15c2072563542, type: 3}
+      propertyPath: fallGravityMult
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 9127823867057930349, guid: ff3613d118eb60b42ae15c2072563542, type: 3}
+      propertyPath: doKeepRunMomentum
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9127823867057930349, guid: ff3613d118eb60b42ae15c2072563542, type: 3}
+      propertyPath: quickFallGravityMult
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 9127823867057930349, guid: ff3613d118eb60b42ae15c2072563542, type: 3}
       propertyPath: groundChecks.Array.size
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 9127823867057930349, guid: ff3613d118eb60b42ae15c2072563542, type: 3}
       propertyPath: groundChecks.Array.data[1]
       value: 
-      objectReference: {fileID: 2127678792}
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ff3613d118eb60b42ae15c2072563542, type: 3}

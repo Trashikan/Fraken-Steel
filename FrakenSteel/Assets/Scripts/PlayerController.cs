@@ -2,16 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerControllerTest : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
     //variable that can be modfied in inspector
     
     [Header("Checks")] 
 	[SerializeField] private Transform[] _groundCheckPoints;
-	[SerializeField] private Vector2 _groundChecksSize;
+	[SerializeField] private float _groundChecksSize;
     
     [Header("Data")] 
-    [SerializeField] private float coyoteTime = 0.1;
+    [SerializeField] private float coyoteTime = 0.1f;
     [SerializeField] private LayerMask _groundLayer;
     public float jumpForce=12f;
     public float dragAmount = 0.22f;
@@ -22,7 +22,7 @@ public class PlayerControllerTest : MonoBehaviour
 	public float runAccel= 9.3f;
   	public float runDeccel=15f;
   	public float accelInAir=0.65f;
- 	 public float deccelInAir= 0.65f;
+ 	public float deccelInAir= 0.65f;
 	public float stopPower=1.23f;
 	public float turnPower=1.13f;
 	public float accelPower= 1.05f;
@@ -43,6 +43,7 @@ public class PlayerControllerTest : MonoBehaviour
     public bool IsFacingRight { get; private set; }
 	public bool IsJumping { get; private set; }
     public bool IsDashing { get; private set; }
+    public bool _dashAttacking { get; private set; }
 	public float LastOnGroundTime { get; private set; }
     
     private int _dashesLeft;
@@ -51,32 +52,34 @@ public class PlayerControllerTest : MonoBehaviour
     
     public float LastPressedJumpTime { get; private set; }
 	public float LastPressedDashTime { get; private set; }
+
+
     
-    RigidBody2D rb;
+    Rigidbody2D rb;
 
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        isFacingRight = true;
+        IsFacingRight = true;
     }
 
     private void Update()
     {
         Timers();
         PhysicsChecks();
-	Input();
+		GetInput();
         
         // Gravity when falling for better jump
         if (!IsDashing)
-	{
-		if (rb.velocity.y >= 0)
-			SetGravityScale(gravityScale);
-		else if (Input.GetAxis("Vertical") < 0)
-			SetGravityScale(gravityScale * quickFallGravityMult);
-		else
-			SetGravityScale(gravityScale * fallGravityMult);
-	}
+		{
+			if (rb.velocity.y >= 0)
+				SetGravityScale(gravityScale);
+			else if (Input.GetAxis("Vertical") < 0)
+				SetGravityScale(gravityScale * quickFallGravityMult);
+			else
+				SetGravityScale(gravityScale * fallGravityMult);
+		}
         
         CalculateJump();
         CalculateDash();
@@ -84,25 +87,24 @@ public class PlayerControllerTest : MonoBehaviour
     
     private void Timers(){
         LastOnGroundTime -= Time.deltaTime;
-	LastOnWallTime -= Time.deltaTime;
-	LastOnWallRightTime -= Time.deltaTime;
-	LastOnWallLeftTime -= Time.deltaTime;
-	LastPressedJumpTime -= Time.deltaTime;
-	LastPressedDashTime -= Time.deltaTime;
+		LastPressedJumpTime -= Time.deltaTime;
+		LastPressedDashTime -= Time.deltaTime;
     }
 
-    private void Input()
+    private void GetInput()
     {
+        Debug.Log("input");
         if(Input.GetButtonDown("Jump")){
-		LastPressedJumpTime = jumpBufferTime;
-	}
-	if(Input.GetButtonUp("Jump")){
-		if (CanJumpCut())
-			JumpCut();
-	}
-	if(Input.GetButtonDown("Dash")){
-		LastPressedDashTime = dashBufferTime;
-	}
+            Debug.LogError("should jump input");
+			LastPressedJumpTime = jumpBufferTime;
+		}
+		if(Input.GetButtonUp("Jump")){
+			if (CanJumpCut())
+				JumpCut();
+		}
+		if(Input.GetButtonDown("Dash")){
+			LastPressedDashTime = dashBufferTime;
+		}
     }
     
     private void PhysicsChecks(){
@@ -114,56 +116,62 @@ public class PlayerControllerTest : MonoBehaviour
                 LastOnGroundTime = coyoteTime;
                 break;
             }
-    }
+    	}
+	}
 
     void CalculateJump(){
-        if (IsJumping && RB.velocity.y < 0)
+        if (IsJumping && rb.velocity.y < 0)
 		{
 			// falling
             IsJumping = false;
 		}
         
         if (!IsDashing)
-	{
-		//Jump
-		if (CanJump() && LastPressedJumpTime > 0)
 		{
-			IsJumping = true;
-			Jump();
-		}
+			//Jump
+			if (CanJump() && LastPressedJumpTime > 0)
+			{
+				IsJumping = true;
+				Debug.Log("should jump");
+				Jump();
+			}
         }
     }
     
     void CalculateDash(){
         if (DashAttackOver())
-	{
-		if (_dashAttacking)
 		{
-			_dashAttacking = false;
-			StopDash(_lastDashDir); 
+			if (_dashAttacking)
+			{
+				_dashAttacking = false;
+				StopDash(_lastDashDir); 
+			}
+			else if (Time.time - _dashStartTime > dashAttackTime + dashEndTime)
+			{
+				IsDashing = false; 
+			}
 		}
-		else if (Time.time - _dashStartTime > dashAttackTime + dashEndTime)
+	
+    
+    	if (CanDash() && LastPressedDashTime > 0)
 		{
-			IsDashing = false; 
+			if (new Vector2(Input.GetAxis("Horizontal"),Input.GetAxis("Vertical")) != Vector2.zero)
+			{
+				_lastDashDir = new Vector2(Input.GetAxis("Horizontal"),Input.GetAxis("Vertical"));
+			}
+			else
+				_lastDashDir = IsFacingRight ? Vector2.right : Vector2.left;
+			_dashStartTime = Time.time;
+			_dashesLeft--;
+			_dashAttacking = true;
+			IsDashing = true;
+			IsJumping = false;
+			StartDash(_lastDashDir);
 		}
 	}
     
-        if (CanDash() && LastPressedDashTime > 0)
-	{
-		if (new Vector2(Input.GetAxis("Horizontal"),Input.GetAxis("Vertical"))) != Vector2.zero)
-			_lastDashDir = new Vector2(Input.GetAxis("Horizontal"),Input.GetAxis("Vertical"));
-		else
-			_lastDashDir = IsFacingRight ? Vector2.right : Vector2.left;
-		_dashStartTime = Time.time;
-		_dashesLeft--;
-		_dashAttacking = true;
-		IsDashing = true;
-		IsJumping = false;
-		StartDash(_lastDashDir);
-	}
-    }
 
-	private void Jump()
+	void Jump()
 	{
 
 		LastPressedJumpTime = 0;
@@ -226,11 +234,21 @@ public class PlayerControllerTest : MonoBehaviour
     void FixedUpdate()
     {   
         if (IsDashing)
-		Drag(DashAttackOver()? dragAmount : dashAttackDragAmount);
-	else if(LastOnGroundTime <= 0)
-		Drag(dragAmount);
+			Drag(DashAttackOver()? dragAmount : dashAttackDragAmount);
+		else if(LastOnGroundTime <= 0)
+			Drag(dragAmount);
         else
-		Drag(frictionAmount);
+			Drag(frictionAmount);
+
+
+        if (!IsDashing)
+        {
+            Run(1);
+        }
+        else if (DashAttackOver())
+        {
+            Run(dashEndRunLerp);
+        }
     }
     
     public void SetGravityScale(float scale)
@@ -300,12 +318,6 @@ public class PlayerControllerTest : MonoBehaviour
 		return LastOnGroundTime > 0 && !IsJumping;
     }
 
-	private bool CanWallJump()
-    {
-		return LastPressedJumpTime > 0 && LastOnWallTime > 0 && LastOnGroundTime <= 0 && (!IsWallJumping ||
-			 (LastOnWallRightTime > 0 && _lastWallJumpDir == 1) || (LastOnWallLeftTime > 0 && _lastWallJumpDir == -1));
-	}
-
 	private bool CanJumpCut()
     {
 		return IsJumping && rb.velocity.y > 0;
@@ -324,5 +336,15 @@ public class PlayerControllerTest : MonoBehaviour
 		return IsDashing && Time.time - _dashStartTime > dashAttackTime;
 	}
 
-
+	private void OnDrawGizmos() {
+        Gizmos.color = Color.blue;
+        
+        foreach (Transform groundCheck in _groundCheckPoints)
+        {
+            Gizmos.DrawWireSphere(groundCheck.position, _groundChecksSize);
+        }
+	}
 }
+
+	
+

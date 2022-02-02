@@ -8,3 +8,43 @@ C# parse time         : 1663ms
 candidates check time : 242ms
 console write time    : 15ms
 
+[api-updater (non-obsolete-error-filter)] 02/02/2022 14:50:09 : Starting /Users/frederic.noury/Documents/Artus/dev/unity/2020.3.22f1/Unity.app/Contents/Tools/ScriptUpdater/APIUpdater.NonObsoleteApiUpdaterDetector.exe
+[api-updater (non-obsolete-error-filter)] 
+----------------------------------
+jit/startup time      : 980,495ms
+moved types parse time: 81ms
+candidates parse time : 1ms
+C# parse time         : 1698ms
+candidates check time : 159ms
+console write time    : 1ms
+
+[api-updater (non-obsolete-error-filter)] 02/02/2022 14:51:35 : Starting /Users/frederic.noury/Documents/Artus/dev/unity/2020.3.22f1/Unity.app/Contents/Tools/ScriptUpdater/APIUpdater.NonObsoleteApiUpdaterDetector.exe
+[api-updater (non-obsolete-error-filter)] 
+----------------------------------
+jit/startup time      : 846,374ms
+moved types parse time: 75ms
+candidates parse time : 1ms
+C# parse time         : 1061ms
+candidates check time : 119ms
+console write time    : 0ms
+
+[api-updater (non-obsolete-error-filter)] 02/02/2022 14:51:55 : Starting /Users/frederic.noury/Documents/Artus/dev/unity/2020.3.22f1/Unity.app/Contents/Tools/ScriptUpdater/APIUpdater.NonObsoleteApiUpdaterDetector.exe
+[api-updater (non-obsolete-error-filter)] 
+----------------------------------
+jit/startup time      : 135,212ms
+moved types parse time: 64ms
+candidates parse time : 1ms
+C# parse time         : 361ms
+candidates check time : 94ms
+console write time    : 0ms
+
+[api-updater (non-obsolete-error-filter)] 02/02/2022 14:52:43 : Starting /Users/frederic.noury/Documents/Artus/dev/unity/2020.3.22f1/Unity.app/Contents/Tools/ScriptUpdater/APIUpdater.NonObsoleteApiUpdaterDetector.exe
+[api-updater (non-obsolete-error-filter)] 
+----------------------------------
+jit/startup time      : 572,281ms
+moved types parse time: 67ms
+candidates parse time : 2ms
+C# parse time         : 360ms
+candidates check time : 89ms
+console write time    : 0ms
+

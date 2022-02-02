@@ -1,5 +1,97 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &523005340224141291
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8826230364899637571}
+  m_Layer: 0
+  m_Name: 2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8826230364899637571
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 523005340224141291}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.522, y: -0.561, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 3220849065619311987}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1564824628824913292
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3220849065619311987}
+  m_Layer: 0
+  m_Name: GroundCkecks
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3220849065619311987
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1564824628824913292}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 2.1713605, y: -0.09312279, z: -34.30925}
+  m_LocalScale: {x: 1.1253657, y: 0.7494566, z: 1}
+  m_Children:
+  - {fileID: 7124438488605376441}
+  - {fileID: 8826230364899637571}
+  m_Father: {fileID: 9127823867057930336}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2041317869441130173
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7124438488605376441}
+  m_Layer: 0
+  m_Name: 1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7124438488605376441
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2041317869441130173}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.338, y: -0.556, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 3220849065619311987}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &9127823867057930348
 GameObject:
   m_ObjectHideFlags: 0
@@ -30,7 +122,8 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -1.37, y: 0.01, z: 0}
   m_LocalScale: {x: 0.8886, y: 1.3343, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 3220849065619311987}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -110,20 +203,42 @@ MonoBehaviour:
   m_GameObject: {fileID: 9127823867057930348}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa045365fcc2e4740b0b4304da278be1, type: 3}
+  m_Script: {fileID: 11500000, guid: a19cb6f2ef30e4b9480c73f4559ece3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpForce: 10
-  extraJumpAmount: 0
-  groundChecks:
-  - {fileID: 0}
-  ground:
+  _groundCheckPoints:
+  - {fileID: 7124438488605376441}
+  - {fileID: 8826230364899637571}
+  _groundChecksSize: 0.03
+  coyoteTime: 0.1
+  _groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  Acceleration: 90
-  Deceleration: 60
-  moveClamp: 13
-  isGrounded: 0
+  jumpForce: 12
+  dragAmount: 0.22
+  frictionAmount: 0.55
+  gravityScale: 1.1
+  doKeepRunMomentum: 0
+  runMaxSpeed: 9.5
+  runAccel: 9.3
+  runDeccel: 15
+  accelInAir: 0.65
+  deccelInAir: 0.65
+  stopPower: 1.23
+  turnPower: 1.13
+  accelPower: 1.05
+  jumpBufferTime: 0.1
+  dashBufferTime: 0.05
+  quickFallGravityMult: 2.2
+  fallGravityMult: 1.35
+  jumpCutMultiplier: 0.5
+  dashAmount: 1
+  dashSpeed: 17
+  dashAttackTime: 0.15
+  dashAttackDragAmount: 0.22
+  dashEndTime: 0.1
+  dashUpEndMult: 0.6
+  dashEndRunLerp: 0.3
 --- !u!50 &5069640466591684579
 Rigidbody2D:
   serializedVersion: 4
