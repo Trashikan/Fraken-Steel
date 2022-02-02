@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - MovingPlatform
+  - Hook
   layers:
   - Default
   - TransparentFX
@@ -14,8 +15,8 @@ TagManager:
   - UI
   - Ground
   - Player
-  - 
-  - 
+  - Rope
+  - Hook
   - 
   - 
   - 
@@ -50,4 +51,10 @@ TagManager:
     locked: 0
   - name: Player
     uniqueID: 3265607955
+    locked: 0
+  - name: TestSubject
+    uniqueID: 1720598913
+    locked: 0
+  - name: Hook
+    uniqueID: 3249481889
     locked: 0
