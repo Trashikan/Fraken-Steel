@@ -1595,6 +1595,22 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: aa8ecb19d2cbd4d4198def53a0b93ca0, type: 2}
+    - target: {fileID: 1057867182, guid: cac98aa01ba7260408e56dcfb7e6060f, type: 3}
+      propertyPath: m_Parameters.widthCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1057867182, guid: cac98aa01ba7260408e56dcfb7e6060f, type: 3}
+      propertyPath: m_Parameters.widthCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1057867182, guid: cac98aa01ba7260408e56dcfb7e6060f, type: 3}
+      propertyPath: m_Parameters.widthCurve.m_Curve.Array.data[0].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1057867182, guid: cac98aa01ba7260408e56dcfb7e6060f, type: 3}
+      propertyPath: m_Parameters.widthCurve.m_Curve.Array.data[1].value
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2132408020, guid: cac98aa01ba7260408e56dcfb7e6060f, type: 3}
       propertyPath: rb
       value: 

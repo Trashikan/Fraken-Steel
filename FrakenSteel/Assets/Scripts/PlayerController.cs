@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
     //variable that can be modfied in inspector
-    
+    [Header("Input")]
+    [SerializeField] PlayerControls controls;
     [Header("Checks")] 
 	[SerializeField] private Transform[] _groundCheckPoints;
 	[SerializeField] private float _groundChecksSize;
@@ -38,6 +40,7 @@ public class PlayerController : MonoBehaviour
   	public float dashEndTime= 0.1f;
   	public float dashUpEndMult= 0.6f;
   	public float dashEndRunLerp= 0.3f;
+	public float runLerp;
 
     
     public bool IsFacingRight { get; private set; }
@@ -53,10 +56,17 @@ public class PlayerController : MonoBehaviour
     public float LastPressedJumpTime { get; private set; }
 	public float LastPressedDashTime { get; private set; }
 
+	Vector2 userInput;
 
+	private InputAction playerMovement;
+	private InputAction playerJump;
+	private InputAction playerDash;
     
     Rigidbody2D rb;
 
+	private void Awake() {
+		controls = new PlayerControls();
+	}
 
     void Start()
     {
@@ -68,14 +78,14 @@ public class PlayerController : MonoBehaviour
     {
         Timers();
         PhysicsChecks();
-		GetInput();
+        userInput = playerMovement.ReadValue<Vector2>();
         
         // Gravity when falling for better jump
         if (!IsDashing)
 		{
 			if (rb.velocity.y >= 0)
 				SetGravityScale(gravityScale);
-			else if (Input.GetAxis("Vertical") < 0)
+			else if (userInput.y < 0)
 				SetGravityScale(gravityScale * quickFallGravityMult);
 			else
 				SetGravityScale(gravityScale * fallGravityMult);
@@ -85,26 +95,30 @@ public class PlayerController : MonoBehaviour
         CalculateDash();
     }
     
+    private void FixedUpdate()
+    {   
+        if (IsDashing)
+			Drag(DashAttackOver()? dragAmount : dashAttackDragAmount);
+		else if(LastOnGroundTime <= 0)
+			Drag(dragAmount);
+        else
+			Drag(frictionAmount);
+
+
+        if (!IsDashing)
+        {
+            Run(runLerp);
+        }
+        else if (DashAttackOver())
+        {
+            Run(dashEndRunLerp);
+        }
+    }
+
     private void Timers(){
         LastOnGroundTime -= Time.deltaTime;
 		LastPressedJumpTime -= Time.deltaTime;
 		LastPressedDashTime -= Time.deltaTime;
-    }
-
-    private void GetInput()
-    {
-        Debug.Log("input");
-        if(Input.GetButtonDown("Jump")){
-            Debug.LogError("should jump input");
-			LastPressedJumpTime = jumpBufferTime;
-		}
-		if(Input.GetButtonUp("Jump")){
-			if (CanJumpCut())
-				JumpCut();
-		}
-		if(Input.GetButtonDown("Dash")){
-			LastPressedDashTime = dashBufferTime;
-		}
     }
     
     private void PhysicsChecks(){
@@ -119,7 +133,7 @@ public class PlayerController : MonoBehaviour
     	}
 	}
 
-    void CalculateJump(){
+    private void CalculateJump(){
         if (IsJumping && rb.velocity.y < 0)
 		{
 			// falling
@@ -138,7 +152,7 @@ public class PlayerController : MonoBehaviour
         }
     }
     
-    void CalculateDash(){
+    private void CalculateDash(){
         if (DashAttackOver())
 		{
 			if (_dashAttacking)
@@ -155,12 +169,14 @@ public class PlayerController : MonoBehaviour
     
     	if (CanDash() && LastPressedDashTime > 0)
 		{
-			if (new Vector2(Input.GetAxis("Horizontal"),Input.GetAxis("Vertical")) != Vector2.zero)
+			if (userInput != Vector2.zero)
 			{
-				_lastDashDir = new Vector2(Input.GetAxis("Horizontal"),Input.GetAxis("Vertical"));
+				_lastDashDir = userInput;
 			}
 			else
-				_lastDashDir = IsFacingRight ? Vector2.right : Vector2.left;
+				// _lastDashDir = IsFacingRight ? Vector2.right : Vector2.left;
+			if(LastOnGroundTime > 0) _lastDashDir = IsFacingRight ? Vector2.right : Vector2.left;
+			else _lastDashDir = Vector2.up;
 			_dashStartTime = Time.time;
 			_dashesLeft--;
 			_dashAttacking = true;
@@ -170,8 +186,7 @@ public class PlayerController : MonoBehaviour
 		}
 	}
     
-
-	void Jump()
+	private void Jump()
 	{
 
 		LastPressedJumpTime = 0;
@@ -185,11 +200,9 @@ public class PlayerController : MonoBehaviour
 	
 	}
 	
-	
-	//ngl I got this big block on internet
 	private void Run(float lerpAmount)
 	{
-		float targetSpeed = Input.GetAxis("Horizontal") * runMaxSpeed; 
+		float targetSpeed = userInput.x * runMaxSpeed; 
 		float speedDif = targetSpeed - rb.velocity.x; 
 
 		float accelRate;
@@ -227,29 +240,10 @@ public class PlayerController : MonoBehaviour
 
 		rb.AddForce(movement * Vector2.right); 
 
-		if (Input.GetAxis("Horizontal") != 0)
-			CheckDirectionToFace(Input.GetAxis("Horizontal") > 0);
+		if (userInput.x != 0)
+			CheckDirectionToFace(userInput.x > 0);
 	}
 
-    void FixedUpdate()
-    {   
-        if (IsDashing)
-			Drag(DashAttackOver()? dragAmount : dashAttackDragAmount);
-		else if(LastOnGroundTime <= 0)
-			Drag(dragAmount);
-        else
-			Drag(frictionAmount);
-
-
-        if (!IsDashing)
-        {
-            Run(1);
-        }
-        else if (DashAttackOver())
-        {
-            Run(dashEndRunLerp);
-        }
-    }
     
     public void SetGravityScale(float scale)
 	{
@@ -295,7 +289,6 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
-
     private void Turn()
     {
         IsFacingRight = !IsFacingRight;
@@ -303,10 +296,7 @@ public class PlayerController : MonoBehaviour
         playerScale.x = playerScale.x * -1;
         transform.localScale = playerScale;
     }
-    
-    
-    
-    
+
     public void CheckDirectionToFace(bool isMovingRight)
 	{
 		if (isMovingRight != IsFacingRight)
@@ -344,6 +334,38 @@ public class PlayerController : MonoBehaviour
             Gizmos.DrawWireSphere(groundCheck.position, _groundChecksSize);
         }
 	}
+	
+
+	private void OnDisable() {
+        playerMovement.Disable();
+        controls.Player.Jump.Disable();
+        controls.Player.dash.Disable();
+	}
+
+	private void OnEnable() {
+        playerMovement = controls.Player.Move;
+        playerMovement.Enable();
+
+		controls.Player.dash.performed += OnDash;
+        controls.Player.dash.Enable();
+
+        controls.Player.Jump.performed += OnJump;
+        controls.Player.Jump.canceled += OnJumpUp;
+        controls.Player.Jump.Enable();
+	}
+
+	private void OnJump(InputAction.CallbackContext ctx){
+        LastPressedJumpTime = jumpBufferTime;
+	}
+    private void OnJumpUp(InputAction.CallbackContext ctx)
+    {
+        if (CanJumpCut())
+            JumpCut();
+    }
+    private void OnDash(InputAction.CallbackContext ctx)
+    {
+        LastPressedDashTime = dashBufferTime;
+    }
 }
 
 	

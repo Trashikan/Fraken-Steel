@@ -102,8 +102,8 @@ GameObject:
   m_Component:
   - component: {fileID: 9127823867057930336}
   - component: {fileID: 9127823867057930351}
-  - component: {fileID: 9127823867057930350}
   - component: {fileID: 9127823867057930349}
+  - component: {fileID: 9127823867057930350}
   - component: {fileID: 5069640466591684579}
   m_Layer: 7
   m_Name: Player
@@ -178,22 +178,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!70 &9127823867057930350
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9127823867057930348}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 1, y: 0.99999994}
-  m_Direction: 0
 --- !u!114 &9127823867057930349
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -239,6 +223,22 @@ MonoBehaviour:
   dashEndTime: 0.1
   dashUpEndMult: 0.6
   dashEndRunLerp: 0.3
+--- !u!70 &9127823867057930350
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9127823867057930348}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_Size: {x: 1, y: 0.99999994}
+  m_Direction: 0
 --- !u!50 &5069640466591684579
 Rigidbody2D:
   serializedVersion: 4
