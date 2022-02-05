@@ -6,14 +6,10 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     //variable that can be modfied in inspector
-<<<<<<< HEAD
     [Header("Input")]
     [SerializeField] PlayerControls controls;
-    [Header("Checks")] 
-=======
     
     [Header("============ Checks ============")] 
->>>>>>> 11f7edebfd9b10793b4be8b5a0764cfbc5be8e07
 	[SerializeField] private Transform[] _groundCheckPoints;
 	[SerializeField] private float _groundChecksSize;
     
