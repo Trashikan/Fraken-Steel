@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerGrapple : MonoBehaviour
 {
     public bool isGrapping;
+    public PlayerController playercontroller;
 
     [Space(3)]
     [Header("============= Player Properties =============")]
@@ -40,6 +41,7 @@ public class PlayerGrapple : MonoBehaviour
 
     private void Update()
     {
+        
         if (Input.GetMouseButtonDown(0))
         {
           
@@ -88,7 +90,7 @@ public class PlayerGrapple : MonoBehaviour
        
         springJoint.enabled = true;
 
-       
+        playercontroller.enabled = false;
         line.enabled = true;
     }
 
@@ -115,7 +117,7 @@ public class PlayerGrapple : MonoBehaviour
 
        
         line.enabled = false;
-
+        
         
         line.SetPosition(0, transform.position);
         line.SetPosition(1, transform.position);
