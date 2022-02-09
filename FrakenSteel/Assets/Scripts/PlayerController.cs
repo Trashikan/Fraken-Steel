@@ -37,10 +37,11 @@ public class PlayerController : MonoBehaviour
 	public float jumpCutMultiplier = 0.5f;
 	public int dashAmount= 1;
   	public float dashSpeed= 17f;
-  	public float dashAttackTime= 0.15f;
+  	public float dashTime= 0.15f;
   	public float dashAttackDragAmount= 0.22f;
   	public float dashEndTime= 0.1f;
   	public float dashUpEndMult= 0.6f;
+  	public bool dashUpEnd= true;
   	public float dashEndRunLerp= 0.3f;
 	public float runLerp;
 
@@ -100,7 +101,7 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {   
         if (IsDashing)
-			Drag(DashAttackOver()? dragAmount : dashAttackDragAmount);
+			Drag(DashOver()? dragAmount : dashAttackDragAmount);
 		else if(LastOnGroundTime <= 0)
 			Drag(dragAmount);
         else
@@ -111,7 +112,7 @@ public class PlayerController : MonoBehaviour
         {
             Run(runLerp);
         }
-        else if (DashAttackOver())
+        else if (DashOver())
         {
             Run(dashEndRunLerp);
         }
@@ -155,17 +156,10 @@ public class PlayerController : MonoBehaviour
     }
     
     private void CalculateDash(){
-        if (DashAttackOver())
+        if (DashOver())
 		{
-			if (_dashAttacking)
-			{
-				_dashAttacking = false;
-				StopDash(_lastDashDir); 
-			}
-			else if (Time.time - _dashStartTime > dashAttackTime + dashEndTime)
-			{
-				IsDashing = false; 
-			}
+				IsDashing = false;
+                StopDash(_lastDashDir);
 		}
 	
     
@@ -181,7 +175,6 @@ public class PlayerController : MonoBehaviour
 			else _lastDashDir = Vector2.up;
 			_dashStartTime = Time.time;
 			_dashesLeft--;
-			_dashAttacking = true;
 			IsDashing = true;
 			IsJumping = false;
 			StartDash(_lastDashDir);
@@ -276,20 +269,23 @@ public class PlayerController : MonoBehaviour
 		SetGravityScale(0);
 
 		rb.velocity = dir.normalized * dashSpeed;
+
 	}
 
 	private void StopDash(Vector2 dir)
     {
 		SetGravityScale(gravityScale);
 
+		if(dashUpEnd){
 		if (dir.y > 0)
 		{
 			if (dir.x == 0)
-				rb.AddForce(Vector2.down * rb.velocity.y * (1 - dashUpEndMult), ForceMode2D.Impulse);
+				rb.AddForce(Vector2.down * rb.velocity.y * (1 - dashUpEndMult) * .8f, ForceMode2D.Impulse);
 			else
 				rb.AddForce(Vector2.down * rb.velocity.y * (1 - dashUpEndMult) * .7f, ForceMode2D.Impulse);
-		}
+		}}
 	}
+
 
     private void Turn()
     {
@@ -323,9 +319,9 @@ public class PlayerController : MonoBehaviour
 		return _dashesLeft > 0;
 	}
 
-	private bool DashAttackOver()
+	private bool DashOver()
     {
-		return IsDashing && Time.time - _dashStartTime > dashAttackTime;
+		return IsDashing && Time.time - _dashStartTime > dashTime;
 	}
 
 	private void OnDrawGizmos() {

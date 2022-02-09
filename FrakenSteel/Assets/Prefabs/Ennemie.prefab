@@ -75,7 +75,7 @@ SpriteRenderer:
   m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 48e93eef0688c4a259cb0eddcd8661f7, type: 3}
-  m_Color: {r: 0.06285242, g: 0.058205754, b: 0.11320752, a: 1}
+  m_Color: {r: 0.1981132, g: 0.1981132, b: 0.1981132, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -136,3 +136,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 0
   PatrolPoints: []
+  timeBetweenIdle: 7
+  IdleProbability: 100
+  minimumTimeIdle: 2
+  maximumTimeIdle: 5
